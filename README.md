@@ -13,7 +13,8 @@ Este proyecto utiliza las siguientes dependencias principales:
 - Configuración
 - Configuración de la Base de Datos
 - Asegúrate de que PostgreSQL esté instalado y en ejecución en tu máquina local. Puedes cambiar la URL, el usuario y la contraseña de la base de datos en el archivo application.properties según tu configuración local.
-  
+- se debe tener la misma BD para que funcione
+
 - spring.application.name=crud
 - spring.datasource.url=jdbc:postgresql://localhost:5432/crud
 - spring.datasource.username=postgres
@@ -22,44 +23,160 @@ Este proyecto utiliza las siguientes dependencias principales:
 - spring.jpa.show-sql=true
 - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 - spring.jpa.properties.hibernate.format_sql=true
+  [
+  {
+  "id": 2,
+  "fecha": "2025-05-27",
+  "tipoMovimiento": "Retiro",
+  "valor": 500.0,
+  "saldo": 2100.0,
+  "cuenta": {
+  "id": 1,
+  "numeroCuenta": "478758",
+  "tipoCuenta": "Ahorro",
+  "saldoInicial": 2100.0,
+  "estado": true,
+  "cliente": {
+  "id": 1,
+  "nombre": "Jose Lema",
+  "genero": null,
+  "edad": 0,
+  "identificacion": "1234567890",
+  "direccion": "Otavalo sn y principal",
+  "telefono": "0985245785",
+  "clienteid": "joselema123",
+  "contrasena": "secreto123",
+  "estado": true
+  }
+  }
+  }
+  ]
 
+---
 
-# Crear Cliente-cuenta- movimiento
-- CLIENTE
+# 🏦 Sistema Bancario con Spring Boot
 
+Este proyecto implementa una API REST para la gestión de clientes, cuentas bancarias y movimientos financieros (depósitos y retiros), utilizando Spring Boot y buenas prácticas de desarrollo. Se incluye además la generación de reportes por fecha y cliente, así como validaciones de datos robustas.
+
+## ✅ Tecnologías utilizadas
+
+- Java 17
+- Spring Boot 3.x
+- Spring Data JPA
+- Hibernate
+- H2 Database (modo embebido para pruebas)
+- Lombok
+- JUnit 5 + Spring MockMvc
+- SLF4J + Logback
+
+## ▶️ Pruebas funcionales en Postman
+
+### Crear Cliente
+POST `/api/v1/clientes`
+```json
 {
-"nombre":"ACH",
-"genero":"M",
-"edad":20,
-"identificacion":"17234567489",
-"direccion":"Torres del castilo",
-"telefono":"096999999",
-"clienteid":"2905022",
-"contrasena":"password123",
-"estado":true
+  "clienteid": "joselema123",
+  "nombre": "Jose Lema",
+  "identificacion": "1234567890",
+  "direccion": "Otavalo sn y principal",
+  "telefono": "0985245785",
+  "contrasena": "secreto123",
+  "estado": true
 }
-------
-- CUENTA
+```
 
+### Crear Cuenta
+POST `/api/v1/cuentas`
+```json
 {
-"numeroCuenta":"123456788",
-"tipoCuenta":"Ahorros",
-"saldoInicial": 500.00,
-"estado": true,
-"cliente":{
-"id":1
+  "numeroCuenta": "478758",
+  "tipoCuenta": "Ahorro",
+  "saldoInicial": 2000,
+  "estado": true,
+  "clienteId": 1
 }
-}
-___________
-- MOVIMIENTO
+```
 
+### Cuenta Duplicada
+POST `/api/v1/cuentas`
+```json
 {
-"tipoMovimiento":"DEPOSITO",
-"valor":800,
-"cuenta":{
-"numeroCuenta":"123456788"
+  "numeroCuenta": "478758",
+  "tipoCuenta": "Corriente",
+  "saldoInicial": 100,
+  "estado": true,
+  "clienteId": 1
 }
+```
+**Response:**
+```json
+{
+  "error": true,
+  "message": "Ya existe una cuenta con ese número"
 }
+```
+
+### Movimiento - Depósito
+POST `/api/v1/movimientos`
+```json
+{
+  "tipoMovimiento": "Deposito",
+  "valor": 600,
+  "numeroCuenta": "478758"
+}
+```
+
+### Movimiento - Retiro
+POST `/api/v1/movimientos`
+```json
+{
+  "tipoMovimiento": "Retiro",
+  "valor": 500,
+  "numeroCuenta": "478758"
+}
+```
+
+### Movimiento - Saldo Insuficiente
+POST `/api/v1/movimientos`
+```json
+{
+  "tipoMovimiento": "Retiro",
+  "valor": 9999,
+  "numeroCuenta": "478758"
+}
+```
+**Response:**
+```
+Saldo no disponible
+```
+
+### Reporte por Cliente y Fechas
+GET `/api/v1/movimientos/reportes?clienteId=1&fechaDesde=2025-05-27&fechaHasta=2025-05-27`
+
+### Filtrar Movimientos por Tipo
+GET `/api/v1/movimientos/tipo?tipo=Retiro`
+
+---
+
+## 📁 Estructura de Carpetas
+
+```
+src
+ └── main
+     ├── java
+     │   └── com.example.crud.pruebaTec
+     │       ├── controller
+     │       ├── dto
+     │       ├── exeption
+     │       ├── mapper
+     │       ├── model
+     │       ├── repository
+     │       ├── service
+     │       └── serviceImpl
+     └── resources
+         ├── application.properties
+         └── data.sql (opcional)
+
 
 
 

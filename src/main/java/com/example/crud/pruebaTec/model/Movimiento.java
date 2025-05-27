@@ -11,18 +11,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Movimiento {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate fecha;
+
+    @Column(name = "tipo_movimiento")
     private String tipoMovimiento;
+
     private double valor;
+
     private double saldo;
 
     @ManyToOne
-    @JoinColumn(name = "cuenta_id", nullable = false)
+    @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
-
 }

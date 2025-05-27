@@ -1,14 +1,11 @@
 package com.example.crud.pruebaTec.service;
 
-import com.example.crud.pruebaTec.model.Cuenta;
-import org.springframework.http.ResponseEntity;
-
+import com.example.crud.pruebaTec.dto.CuentaDto;
 import java.util.List;
 
 public interface CuentaService {
-    List<Cuenta> getCuentas();
-
-    Cuenta saveOrUpdateCuenta(Cuenta cuenta);
-
-    ResponseEntity<Object> deleteCuenta(Long id);
+    List<CuentaDto> getCuentas();
+    CuentaDto createCuenta(CuentaDto cuentaDto);
+    CuentaDto updateCuenta(Long id, CuentaDto cuentaDto);
+    void deleteCuenta(Long id);
 }

@@ -1,7 +1,8 @@
 package com.example.crud.pruebaTec.controller;
 
-import com.example.crud.pruebaTec.model.Cuenta;
+import com.example.crud.pruebaTec.dto.CuentaDto;
 import com.example.crud.pruebaTec.service.CuentaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/cuentas")
+@RequestMapping("api/v1/cuentas")
 public class CuentaController {
 
     private final CuentaService cuentaService;
@@ -20,22 +21,24 @@ public class CuentaController {
     }
 
     @GetMapping
-    public List<Cuenta> getCuentas() {
-        return this.cuentaService.getCuentas();
+    public ResponseEntity<List<CuentaDto>> getCuentas() {
+        return ResponseEntity.ok(cuentaService.getCuentas());
     }
 
     @PostMapping
-    public Cuenta registerCuenta(@RequestBody Cuenta cuenta) {
-        return this.cuentaService.saveOrUpdateCuenta(cuenta);
+    public ResponseEntity<CuentaDto> createCuenta(@Valid @RequestBody CuentaDto cuentaDto) {
+        return ResponseEntity.ok(cuentaService.createCuenta(cuentaDto));
     }
 
-    @PutMapping
-    public Cuenta updateCuenta(@RequestBody Cuenta cuenta) {
-        return this.cuentaService.saveOrUpdateCuenta(cuenta);
+    @PutMapping("/{id}")
+    public ResponseEntity<CuentaDto> updateCuenta(@PathVariable Long id,
+                                                  @Valid @RequestBody CuentaDto cuentaDto) {
+        return ResponseEntity.ok(cuentaService.updateCuenta(id, cuentaDto));
     }
 
-    @DeleteMapping(path = "{cuentaId}")
-    public ResponseEntity<Object> deleteCuenta(@PathVariable("cuentaId") Long id) {
-        return this.cuentaService.deleteCuenta(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCuenta(@PathVariable Long id) {
+        cuentaService.deleteCuenta(id);
+        return ResponseEntity.noContent().build();
     }
 }

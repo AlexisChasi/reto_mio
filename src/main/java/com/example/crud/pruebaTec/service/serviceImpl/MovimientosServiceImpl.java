@@ -1,28 +1,28 @@
 package com.example.crud.pruebaTec.service.serviceImpl;
 
+import com.example.crud.pruebaTec.dto.MovimientoDto;
+import com.example.crud.pruebaTec.dto.ReporteDto;
 import com.example.crud.pruebaTec.exeption.ResourceNotFoundException;
+import com.example.crud.pruebaTec.mapper.MovimientoMapper;
 import com.example.crud.pruebaTec.model.Cuenta;
 import com.example.crud.pruebaTec.model.Movimiento;
 import com.example.crud.pruebaTec.repository.CuentaRepository;
 import com.example.crud.pruebaTec.repository.MovimientosRepository;
-
 import com.example.crud.pruebaTec.service.MovimientosService;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-
+import java.util.stream.Collectors;
+@Slf4j
 @Service
 public class MovimientosServiceImpl implements MovimientosService {
 
     private final MovimientosRepository movimientosRepository;
     private final CuentaRepository cuentaRepository;
-    private HashMap<String, Object> dataMovimiento;
 
     @Autowired
     public MovimientosServiceImpl(MovimientosRepository movimientosRepository, CuentaRepository cuentaRepository) {
@@ -32,62 +32,93 @@ public class MovimientosServiceImpl implements MovimientosService {
 
     @Override
     public List<Movimiento> getMovimientos() {
+        log.info("Consultando todos los movimientos");
         return movimientosRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<?> newMovimiento(Movimiento movimiento) {
-        Optional<Cuenta> cuentaOpt = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta());
-        if (!cuentaOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cuenta no encontrada");
-        }
+    public Movimiento crearMovimiento(MovimientoDto dto) {
+        log.info("Iniciando creación de movimiento para cuenta {}", dto.getNumeroCuenta());
 
-        Cuenta cuenta = cuentaOpt.get();
+        Cuenta cuenta = cuentaRepository.findByNumeroCuenta(dto.getNumeroCuenta())
+                .orElseThrow(() -> {
+                    log.warn("Cuenta no encontrada: {}", dto.getNumeroCuenta());
+                    return new ResourceNotFoundException("Cuenta no encontrada");
+                });
+
         double saldoActual = cuenta.getSaldoInicial();
         double nuevoSaldo;
+        String tipo = dto.getTipoMovimiento().toUpperCase();
+        double valor = dto.getValor();
 
-        String tipo = movimiento.getTipoMovimiento().toUpperCase();
+        if (!tipo.equals("RETIRO") && !tipo.equals("DEPOSITO")) {
+            log.warn("Tipo de movimiento inválido: {}", tipo);
+            throw new IllegalArgumentException("Tipo de movimiento inválido");
+        }
+
+        if (valor <= 0) {
+            log.warn("El valor del movimiento debe ser mayor a cero: {}", valor);
+            throw new IllegalArgumentException("El valor debe ser mayor que cero");
+        }
 
         if (tipo.equals("RETIRO")) {
-            if (movimiento.getValor() > saldoActual) {
-                return ResponseEntity.badRequest().body("Saldo insuficiente");
+            if (valor > saldoActual) {
+                log.warn("Saldo insuficiente. Saldo actual: {}, intento de retiro: {}", saldoActual, valor);
+                throw new IllegalArgumentException("Saldo no disponible");
             }
-            nuevoSaldo = saldoActual - movimiento.getValor();
-        } else if (tipo.equals("DEPOSITO")) {
-            nuevoSaldo = saldoActual + movimiento.getValor();
+            nuevoSaldo = saldoActual - valor;
         } else {
-            return ResponseEntity.badRequest().body("Tipo de movimiento inválido");
+            nuevoSaldo = saldoActual + valor;
         }
 
         cuenta.setSaldoInicial(nuevoSaldo);
         cuentaRepository.save(cuenta);
+        log.info("Cuenta actualizada. Nuevo saldo: {}", nuevoSaldo);
 
+        Movimiento movimiento = MovimientoMapper.toMovimiento(dto, cuenta);
         movimiento.setFecha(LocalDate.now());
         movimiento.setSaldo(nuevoSaldo);
-        movimiento.setCuenta(cuenta);
-        movimientosRepository.save(movimiento);
 
-        return ResponseEntity.ok(movimiento);
+        Movimiento guardado = movimientosRepository.save(movimiento);
+        log.info("Movimiento guardado con éxito. ID: {}", guardado.getId());
+
+        return guardado;
     }
 
     @Override
-    public ResponseEntity<Object> deleteMovimiento(Long id) {
-        dataMovimiento = new HashMap<>();
+    public void deleteMovimiento(Long id) {
         if (!movimientosRepository.existsById(id)) {
+            log.warn("Intento de eliminar movimiento inexistente. ID: {}", id);
             throw new ResourceNotFoundException("Movimiento no encontrado");
         }
         movimientosRepository.deleteById(id);
-        dataMovimiento.put("message", "Movimiento eliminado");
-        return ResponseEntity.ok(dataMovimiento);
+        log.info("Movimiento eliminado exitosamente. ID: {}", id);
     }
 
     @Override
-    public List<Movimiento> getMovimientosByTipoMovimiento(String tipoMovimiento) {
-        return movimientosRepository.findByTipoMovimiento(tipoMovimiento);
+    public List<Movimiento> getMovimientosPorTipo(String tipoMovimiento) {
+        log.info("Buscando movimientos por tipo: {}", tipoMovimiento);
+        return movimientosRepository.findByTipoMovimiento(tipoMovimiento.toUpperCase());
     }
 
     @Override
-    public List<Movimiento> getMovimientosPorClienteYFecha(String clienteid, LocalDate fechaInicio, LocalDate fechaFin) {
-        return movimientosRepository.findByCuentaClienteClienteidAndFechaBetween(clienteid, fechaInicio, fechaFin);
+    public List<ReporteDto> getReportePorClienteYFechas(Long clienteId, LocalDate desde, LocalDate hasta) {
+        log.info("Generando reporte de movimientos. Cliente ID: {}, Desde: {}, Hasta: {}", clienteId, desde, hasta);
+
+        List<Movimiento> movimientos = movimientosRepository.findByClienteIdAndFechaBetween(clienteId, desde, hasta);
+
+        log.info("Total movimientos encontrados: {}", movimientos.size());
+
+        return movimientos.stream().map(m -> ReporteDto.builder()
+                .fecha(m.getFecha())
+                .cliente(m.getCuenta().getCliente().getNombre())
+                .numeroCuenta(m.getCuenta().getNumeroCuenta())
+                .tipo(m.getCuenta().getTipoCuenta())
+                .saldoInicial(m.getCuenta().getSaldoInicial())
+                .estado(m.getCuenta().isEstado())
+                .movimiento(m.getValor())
+                .saldoDisponible(m.getSaldo())
+                .build()
+        ).collect(Collectors.toList());
     }
 }
