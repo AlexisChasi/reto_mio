@@ -61,7 +61,7 @@ public class MovimientoControllerIntegrationTest {
     }
 
     @Test
-    void registrarMovimientoDebeRetornar201() throws Exception {
+    void registrarMovimiento() throws Exception {
         MovimientoDto dto = new MovimientoDto();
         dto.setTipoMovimiento("Deposito");
         dto.setValor(500);
