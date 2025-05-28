@@ -5,6 +5,8 @@ import lombok.*;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CuentaDto {
 
     private Long id;
