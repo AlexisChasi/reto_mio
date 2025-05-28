@@ -50,12 +50,12 @@ Este proyecto implementa una API REST para la gestión de clientes, cuentas banc
 POST `/api/v1/clientes`
 ```json
 {
-  "clienteid": "joselema123",
+  "clienteid": "Joselema123",
   "nombre": "Jose Lema",
   "identificacion": "1234567890",
   "direccion": "Otavalo sn y principal",
   "telefono": "0985245785",
-  "contrasena": "secreto123",
+  "contrasena": "Secreto123@",
   "estado": true
 }
 ```
