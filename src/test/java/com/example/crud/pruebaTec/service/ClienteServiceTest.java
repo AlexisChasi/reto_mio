@@ -26,7 +26,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    void debeCrearClienteExitosamente() {
+    void CrearClienteExitosamente() {
         ClienteDto dto = ClienteDto.builder()
                 .clienteid("nuevo123")
                 .nombre("Nuevo Cliente")
@@ -52,7 +52,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    void debeFallarSiClienteYaExiste() {
+    void FallarSiClienteYaExiste() {
         ClienteDto dto = ClienteDto.builder()
                 .clienteid("repetido")
                 .nombre("Juan")
