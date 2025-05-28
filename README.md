@@ -23,36 +23,11 @@ Este proyecto utiliza las siguientes dependencias principales:
 - spring.jpa.show-sql=true
 - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 - spring.jpa.properties.hibernate.format_sql=true
-  [
-  {
-  "id": 2,
-  "fecha": "2025-05-27",
-  "tipoMovimiento": "Retiro",
-  "valor": 500.0,
-  "saldo": 2100.0,
-  "cuenta": {
-  "id": 1,
-  "numeroCuenta": "478758",
-  "tipoCuenta": "Ahorro",
-  "saldoInicial": 2100.0,
-  "estado": true,
-  "cliente": {
-  "id": 1,
-  "nombre": "Jose Lema",
-  "genero": null,
-  "edad": 0,
-  "identificacion": "1234567890",
-  "direccion": "Otavalo sn y principal",
-  "telefono": "0985245785",
-  "clienteid": "joselema123",
-  "contrasena": "secreto123",
-  "estado": true
-  }
-  }
-  }
-  ]
 
 ---
+# 🏦 Documentacion con Swagger UI 
+- primero se debe iniciar el proyecto e ingresar a dicha documentacion
+- http://localhost:8080/swagger-ui.html
 
 # 🏦 Sistema Bancario con Spring Boot
 
