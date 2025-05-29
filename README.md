@@ -50,17 +50,30 @@ POST `/api/v1/clientes`
   "direccion": "Otavalo sn y principal",
   "telefono": "0985245785",
   "contrasena": "Secreto123@",
-  "estado": true
+  "estado": true,
+  "edad": 30,
+  "genero": "Masculino"
 }
 ```
+### Actualizar Cliente
+Put`/api/v1/clientes`
+{
+
+"nombre": "Whelinc",
+"direccion": "Amazonas",
+"telefono": "3898037864",
+"contrasena": "Contrase$13",
+"estado": true
+}
+
 
 ### Crear Cuenta
 POST `/api/v1/cuentas`
 ```json
 {
-  "numeroCuenta": "478758",
+  "numeroCuenta": "958978",
   "tipoCuenta": "Ahorro",
-  "saldoInicial": 2000,
+  "saldoInicial": 600,
   "estado": true,
   "clienteId": 1
 }
@@ -90,8 +103,8 @@ POST `/api/v1/movimientos`
 ```json
 {
   "tipoMovimiento": "Deposito",
-  "valor": 600,
-  "numeroCuenta": "478758"
+  "valor": 500,
+  "numeroCuenta": "958978"
 }
 ```
 
@@ -119,8 +132,9 @@ POST `/api/v1/movimientos`
 Saldo no disponible
 ```
 
+### Cada Metodo tiene sus propias validaciones 
 ### Reporte por Cliente y Fechas
-GET `/api/v1/movimientos/reportes?clienteId=1&fechaDesde=2025-05-27&fechaHasta=2025-05-27`
+http://localhost:8080/api/v1/movimientos/reportes?clienteId=1&fechaDesde=2025-05-29&fechaHasta=2025-05-29
 
 ### Filtrar Movimientos por Tipo
 GET `/api/v1/movimientos/tipo?tipo=Retiro`
@@ -141,7 +155,8 @@ src
      │       ├── model
      │       ├── repository
      │       ├── service
-     │       └── serviceImpl
+     │       ├── serviceImpl
+     |       |__ validation 
      └── resources
          ├── application.properties
          └── data.sql (opcional)
