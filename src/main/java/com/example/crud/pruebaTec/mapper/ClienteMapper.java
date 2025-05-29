@@ -13,7 +13,9 @@ public class ClienteMapper {
                 .identificacion(cliente.getIdentificacion())
                 .direccion(cliente.getDireccion())
                 .telefono(cliente.getTelefono())
-                .contrasena(cliente.getContrasena()) // <-- agregado
+                .contrasena(cliente.getContrasena())
+                .edad(cliente.getEdad())
+                .genero(cliente.getGenero())
                 .estado(cliente.isEstado())
                 .build();
     }
@@ -26,7 +28,9 @@ public class ClienteMapper {
         cliente.setIdentificacion(dto.getIdentificacion());
         cliente.setDireccion(dto.getDireccion());
         cliente.setTelefono(dto.getTelefono());
-        cliente.setContrasena(dto.getContrasena()); //
+        cliente.setEdad(dto.getEdad());
+        cliente.setGenero(dto.getGenero());
+        cliente.setContrasena(dto.getContrasena());
         cliente.setEstado(dto.isEstado());
         return cliente;
     }

@@ -64,12 +64,20 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente existente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe un cliente con ese ID"));
 
-        Cliente actualizado = ClienteMapper.toEntity(clienteDTO);
-        actualizado.setId(id);
-        Cliente saved = clienteRepository.save(actualizado);
-        log.info(" Cliente actualizado correctamente: ID={}", saved.getId());
+
+        existente.setNombre(clienteDTO.getNombre());
+        existente.setDireccion(clienteDTO.getDireccion());
+        existente.setTelefono(clienteDTO.getTelefono());
+        existente.setContrasena(clienteDTO.getContrasena());
+        existente.setEstado(clienteDTO.isEstado());
+
+
+
+        Cliente saved = clienteRepository.save(existente);
+        log.info("Cliente actualizado correctamente: ID={}", saved.getId());
         return ClienteMapper.toDto(saved);
     }
+
 
     @Override
     public void deleteCliente(Long id) {
@@ -82,14 +90,8 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     private void validarClienteDto(ClienteDto dto) {
-        if (dto.getClienteid() == null || dto.getClienteid().isBlank()) {
-            throw new IllegalArgumentException("El clienteId no puede estar vacío");
-        }
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío");
-        }
-        if (dto.getIdentificacion() == null || dto.getIdentificacion().isBlank()) {
-            throw new IllegalArgumentException("La identificación no puede estar vacía");
         }
         if (dto.getDireccion() == null || dto.getDireccion().isBlank()) {
             throw new IllegalArgumentException("La dirección no puede estar vacía");
@@ -97,5 +99,9 @@ public class ClienteServiceImpl implements ClienteService {
         if (dto.getTelefono() == null || dto.getTelefono().isBlank()) {
             throw new IllegalArgumentException("El teléfono no puede estar vacío");
         }
+        if (dto.getContrasena() == null || dto.getContrasena().isBlank()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+        }
+
     }
 }

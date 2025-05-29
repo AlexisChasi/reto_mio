@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CuentaControllerIntegrationTest {
@@ -26,7 +25,6 @@ public class CuentaControllerIntegrationTest {
 
     @BeforeEach
     void setupCliente() throws Exception {
-        // Evitar crear el cliente más de una vez
         if (!clienteCreado) {
             String clienteJson = """
             {
@@ -35,16 +33,17 @@ public class CuentaControllerIntegrationTest {
               "identificacion": "0987654321",
               "direccion": "Calle 10",
               "telefono": "0999988776",
-              "contrasena": "secreta123",
-              "estado": true
+              "contrasena": "Secreta123@",
+              "estado": true,
+              "edad": 28,
+              "genero": "Femenino"
             }
             """;
 
             mockMvc.perform(post("/api/v1/clientes")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(clienteJson))
-                    .andExpect(status().isCreated())
-                    .andReturn();
+                    .andExpect(status().isCreated());
 
             clienteCreado = true;
         }

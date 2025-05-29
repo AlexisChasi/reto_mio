@@ -25,7 +25,6 @@ public class MovimientoControllerIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-
         String clienteJson = """
         {
           "clienteid": "joselema123",
@@ -33,17 +32,18 @@ public class MovimientoControllerIntegrationTest {
           "identificacion": "1234567890",
           "direccion": "Otavalo sn y principal",
           "telefono": "0985245785",
-          "contrasena": "secreto123",
-          "estado": true
+          "contrasena": "Secreto123@",
+          "estado": true,
+          "edad": 35,
+          "genero": "Masculino"
         }
-    """;
+        """;
 
         mockMvc.perform(post("/api/v1/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(clienteJson))
                 .andExpect(status().isCreated());
 
-        // Crear cuenta
         String cuentaJson = """
         {
           "numeroCuenta": "478758",
@@ -52,7 +52,7 @@ public class MovimientoControllerIntegrationTest {
           "estado": true,
           "clienteId": 1
         }
-    """;
+        """;
 
         mockMvc.perform(post("/api/v1/cuentas")
                         .contentType(MediaType.APPLICATION_JSON)

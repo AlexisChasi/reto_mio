@@ -15,20 +15,14 @@ Este proyecto utiliza las siguientes dependencias principales:
 - Asegúrate de que PostgreSQL esté instalado y en ejecución en tu máquina local. Puedes cambiar la URL, el usuario y la contraseña de la base de datos en el archivo application.properties según tu configuración local.
 - se debe tener la misma BD para que funcione
 
-- spring.application.name=crud
-- spring.datasource.url=jdbc:postgresql://localhost:5432/crud
-- spring.datasource.username=postgres
-- spring.datasource.password=123456
-- spring.jpa.hibernate.ddl-auto=create-drop
-- spring.jpa.show-sql=true
-- spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-- spring.jpa.properties.hibernate.format_sql=true
 
 ---
 # 🏦 Documentacion con Swagger UI 
 - primero se debe iniciar el proyecto e ingresar a dicha documentacion
 - http://localhost:8080/swagger-ui.html
-
+# 🏦 Documentacion con Swagger UI
+- para correr las pruebas unitarias ejecutar el comando 
+- ./mvnw test
 # 🏦 Sistema Bancario con Spring Boot
 
 Este proyecto implementa una API REST para la gestión de clientes, cuentas bancarias y movimientos financieros (depósitos y retiros), utilizando Spring Boot y buenas prácticas de desarrollo. Se incluye además la generación de reportes por fecha y cliente, así como validaciones de datos robustas.

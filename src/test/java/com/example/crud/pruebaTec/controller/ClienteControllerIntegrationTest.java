@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ClienteControllerIntegrationTest {
@@ -30,8 +29,10 @@ public class ClienteControllerIntegrationTest {
                 .identificacion("1234567001")
                 .direccion("Av. Amazonas 123")
                 .telefono("0987654321")
-                .contrasena("clave123")
+                .contrasena("Clave123@")
                 .estado(true)
+                .edad(30)
+                .genero("Masculino")
                 .build();
 
         mockMvc.perform(post("/api/v1/clientes")
